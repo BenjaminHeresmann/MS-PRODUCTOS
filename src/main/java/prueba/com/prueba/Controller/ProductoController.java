@@ -2,6 +2,7 @@ package prueba.com.prueba.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import prueba.com.prueba.DTO.ProductoConStockDTO;
 import prueba.com.prueba.Model.Producto;
 import prueba.com.prueba.Service.ProductoService;
 
@@ -15,8 +16,8 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping
-    public List<Producto> listarProductos() {
-        return productoService.listarProductos();
+    public List<ProductoConStockDTO> listarProductos() {
+        return productoService.listarProductosConStock();
     }
 
     @PostMapping
@@ -25,8 +26,8 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public Producto obtenerProductoPorId(@PathVariable Long id) {
-        return productoService.obtenerProductoPorId(id);
+    public ProductoConStockDTO obtenerProductoPorId(@PathVariable Long id) {
+        return productoService.obtenerProductoConStock(id);
     }
 
     @PutMapping("/{id}")
