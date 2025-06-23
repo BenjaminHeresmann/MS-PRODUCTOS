@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 // Import para comunicación con microservicios externos
 import org.springframework.web.client.RestTemplate;
 
+// Import para logging
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 // Imports de mis clases del proyecto
 import prueba.com.prueba.DTO.ProductoConStockDTO;
 import prueba.com.prueba.Model.Producto;
@@ -23,21 +27,26 @@ import java.util.Optional;
 @Service
 public class ProductoService {
 
+    // Logger para registrar información, advertencias y errores
+    private static final Logger logger = LoggerFactory.getLogger(ProductoService.class);
+
     // @Autowired: Spring inyecta automáticamente el repository
     // Esto implementa el patrón Repository para acceso a datos
     @Autowired
     private ProductoRepository productoRepository;
 
-    // @Autowired: Spring inyecta el RestTemplate configurado en RestTemplateConfig
-    // Lo uso para hacer llamadas HTTP a otros microservicios
+    // @Autowired: Spring inyecta automáticamente RestTemplate para comunicación HTTP
     @Autowired
     private RestTemplate restTemplate;
 
-    // @Value: Inyecta el valor desde application.properties
-    // Esto permite configurar la URL del microservicio de inventario por ambiente
-    // En dev puede ser localhost:8085, en prod puede ser una URL diferente
+    // @Value: Inyecta valores desde application.properties
+    // Esto permite configurar la URL del servicio de inventario por ambiente
     @Value("${inventario.service.url}")
     private String inventarioServiceUrl;
+
+    // Nueva configuración para habilitar/deshabilitar el servicio de inventario
+    @Value("${inventario.service.enabled:true}")
+    private boolean inventarioServiceEnabled;
 
     // MÉTODO BÁSICO: Obtener todos los productos (sin stock)
     // Simplemente delega al repository que hace la query a la BD
@@ -123,21 +132,33 @@ public class ProductoService {
     // Este método implementa el patrón CIRCUIT BREAKER básico
     // Si el servicio de inventario falla, MI API sigue funcionando
     public Integer obtenerStockSeguro(Long productoId) {
+        // Si el servicio de inventario está deshabilitado, devolver 0 inmediatamente
+        if (!inventarioServiceEnabled) {
+            logger.info("Servicio de inventario deshabilitado. Devolviendo stock 0 para producto {}", productoId);
+            return 0;
+        }
+        
         try {
             // 1. Construyo la URL del microservicio externo
             String url = inventarioServiceUrl + "/inventario/" + productoId;
             
-            // 2. Hago la llamada HTTP GET usando RestTemplate
+            // Log para debug - ver qué URL se está intentando
+            logger.info("Intentando conectar a: {}", url);
+            
+            // 2. Hago la llamada HTTP GET usando RestTemplate (con timeout configurado)
             InventarioResponse inventario = restTemplate.getForObject(url, InventarioResponse.class);
             
             // 3. Si recibo respuesta válida, devuelvo el stock
-            return inventario != null ? inventario.getStockActual() : 0;
+            Integer stock = inventario != null ? inventario.getStockActual() : 0;
+            logger.info("Stock obtenido para producto {}: {}", productoId, stock);
+            return stock;
             
         } catch (Exception e) {
             // 4. CIRCUIT BREAKER: Si hay cualquier error (timeout, servicio caído, etc.)
             // NO fallo completamente, sino que devuelvo un valor por defecto
             // Esto garantiza que MI microservicio siga funcionando aunque el de inventario falle
-            System.out.println("Error al consultar inventario para producto " + productoId + ": " + e.getMessage());
+            logger.error("Error al consultar inventario para producto {}: {}", productoId, e.getMessage());
+            logger.info("Devolviendo stock por defecto (0) para mantener la API funcionando");
             return 0;  // Stock por defecto en caso de error
         }
     }

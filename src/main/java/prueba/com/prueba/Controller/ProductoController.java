@@ -32,7 +32,6 @@ import java.util.List;
 // @Tag: Agrupa los endpoints en Swagger UI bajo una categoría específica
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "*")  // Permite peticiones CORS desde cualquier origen
 @Tag(name = "Productos", description = "API para gestión de productos con información de stock")
 public class ProductoController {
 
