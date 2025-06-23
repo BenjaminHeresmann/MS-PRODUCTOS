@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 // Imports para Spring Test - Testing de aplicaciones Spring Boot
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,11 +38,9 @@ public class ProductoControllerTest {
     // @Autowired: Spring inyecta MockMvc para simular peticiones HTTP
     // MockMvc permite hacer peticiones HTTP de prueba sin levantar un servidor real
     @Autowired
-    private MockMvc mockMvc;
-
-    // @MockBean: Crea un mock (simulación) del service
+    private MockMvc mockMvc;    // @MockitoBean: Crea un mock (simulación) del service
     // Esto aísla el controller del service real - es una PRUEBA UNITARIA pura
-    @MockBean
+    @MockitoBean
     private ProductoService productoService;
 
     // @Autowired: Spring inyecta ObjectMapper para convertir objetos Java <-> JSON

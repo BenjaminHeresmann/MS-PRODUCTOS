@@ -49,9 +49,7 @@ public class ProductoServiceTest {
     private ProductoService productoService;
 
     // Variable para datos de prueba reutilizables
-    private Producto producto;
-
-    // @BeforeEach: Se ejecuta antes de cada test individual
+    private Producto producto;    // @BeforeEach: Se ejecuta antes de cada test individual
     // Preparo datos de prueba consistentes para todos los tests
     @BeforeEach
     void setUp() {
@@ -62,7 +60,18 @@ public class ProductoServiceTest {
         producto.setDescripcion("Laptop Dell Inspiron 15");
         producto.setPrecio(799.99);
         producto.setCategoria("Electrónicos");
-    }    
+        
+        // Configurar el servicio para que el flag de inventario esté habilitado en tests
+        // Esto es necesario porque @ExtendWith(MockitoExtension.class) no carga propiedades de Spring
+        try {
+            var field = ProductoService.class.getDeclaredField("inventarioServiceEnabled");
+            field.setAccessible(true);
+            field.set(productoService, true);
+        } catch (Exception e) {
+            // Si no se puede configurar, los tests fallarán de forma informativa
+            System.err.println("No se pudo configurar inventarioServiceEnabled para tests: " + e.getMessage());
+        }
+    }
     
     
     
