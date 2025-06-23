@@ -15,25 +15,25 @@ import java.io.IOException;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class CorsFilter implements Filter {
-
-    @Override
+public class CorsFilter implements Filter {    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Agregar headers CORS a todas las respuestas
+        // Agregar headers CORS específicos para Swagger UI
         httpResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH");
-        httpResponse.setHeader("Access-Control-Allow-Headers", "*");
+        httpResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma");
         httpResponse.setHeader("Access-Control-Allow-Credentials", "false");
         httpResponse.setHeader("Access-Control-Max-Age", "3600");
+        httpResponse.setHeader("Access-Control-Expose-Headers", "Content-Length, X-Kuma-Revision");
 
-        // Si es una petición OPTIONS (preflight), responder inmediatamente
+        // Si es una petición OPTIONS (preflight), responder inmediatamente con 200
         if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
             httpResponse.setStatus(HttpServletResponse.SC_OK);
+            httpResponse.getWriter().flush();
             return;
         }
 
