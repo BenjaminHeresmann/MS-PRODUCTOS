@@ -4,8 +4,11 @@ package prueba.com.prueba.Config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 // @Configuration: Le dice a Spring que esta clase contiene configuración de beans
 // Esta clase configura la documentación automática de la API
@@ -23,7 +26,12 @@ public class OpenApiConfig {
                         .description("API REST para la gestión de productos con información de stock integrada")
                         .contact(new Contact()      // Información de contacto del desarrollador
                                 .name("Equipo de Desarrollo")
-                                .email("dev@empresa.com")));
+                                .email("dev@empresa.com")))                // Se agregan los servidores para local y producción (Railway)
+                // Esto permite seleccionar el servidor desde la UI de Swagger
+                .servers(List.of(
+                        new Server().url("https://ms-productos-ev3-production.up.railway.app").description("Servidor de Producción (Railway)"),
+                        new Server().url("http://localhost:8089").description("Servidor Local de Desarrollo")
+                ));
     }
     
     // NOTA: La documentación detallada de cada endpoint se hace con anotaciones
