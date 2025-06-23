@@ -1,1 +1,1 @@
-web: java -jar target/prueba-0.0.1-SNAPSHOT.jar
+web: java -jar app.jar

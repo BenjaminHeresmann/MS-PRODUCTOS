@@ -1,0 +1,12 @@
+# Configuración para Railway con Nixpacks
+[phases.build]
+cmds = [
+    "mvn clean package -DskipTests",
+    "cp target/*.jar app.jar"
+]
+
+[phases.start]
+cmd = "java -jar app.jar"
+
+[variables]
+JAVA_OPTS = "-Xmx512m"
