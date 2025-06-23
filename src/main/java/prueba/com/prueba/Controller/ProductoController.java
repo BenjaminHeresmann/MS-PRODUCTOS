@@ -13,6 +13,7 @@ import prueba.com.prueba.DTO.ProductoConStockDTO;
 import prueba.com.prueba.DTO.ProductoDTO;
 import prueba.com.prueba.Model.Producto;
 import prueba.com.prueba.Service.ProductoService;
+import prueba.com.prueba.Config.HateoasConfig;
 
 // Import para validaciones - Requisito de rúbrica: "Validaciones mínimas"
 import jakarta.validation.Valid;
@@ -39,6 +40,9 @@ public class ProductoController {
     // Esto implementa el patrón de Inversión de Dependencias
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private HateoasConfig hateoasConfig;
 
     // ENDPOINT 1: GET /api/productos - Listar todos los productos con stock
     // @GetMapping: Mapea peticiones HTTP GET a este método
