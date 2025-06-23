@@ -48,8 +48,15 @@ public class ProductoController {
     @Operation(summary = "Listar todos los productos", description = "Obtiene una lista de todos los productos con información de stock")
     @ApiResponse(responseCode = "200", description = "Lista de productos obtenida exitosamente")
     public CollectionModel<ProductoConStockDTO> listarProductos() {
+        System.out.println("=== CONTROLLER: Iniciando listarProductos() ===");
+        
         // 1. Llamo al service para obtener productos con stock
         List<ProductoConStockDTO> productos = productoService.listarProductosConStock();
+        
+        System.out.println("CONTROLLER: Recibido del service: " + productos.size() + " productos");
+        if (productos.isEmpty()) {
+            System.out.println("¡CONTROLLER: PROBLEMA! El service devolvió 0 productos");
+        }
         
         // 2. IMPLEMENTACIÓN DE HATEOAS - Requisito de rúbrica
         // Agrego enlaces navegables a cada producto individual
@@ -63,10 +70,12 @@ public class ProductoController {
         }
         
         // 3. Devuelvo una CollectionModel con enlaces a nivel de colección
-        // Esto hace que la API sea "auto-descubrible" - el cliente recibe URLs para navegar
-        return CollectionModel.of(productos)
+        CollectionModel<ProductoConStockDTO> result = CollectionModel.of(productos)
                 .add(linkTo(methodOn(ProductoController.class).listarProductos()).withSelfRel())
                 .add(linkTo(methodOn(ProductoController.class).crearProducto(null)).withRel("create"));
+        
+        System.out.println("=== CONTROLLER: Devolviendo " + productos.size() + " productos ===");
+        return result;
     }
 
     // ENDPOINT 2: POST /api/productos - Crear nuevo producto

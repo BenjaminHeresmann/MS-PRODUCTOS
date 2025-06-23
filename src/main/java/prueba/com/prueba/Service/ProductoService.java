@@ -51,7 +51,24 @@ public class ProductoService {
     // MÉTODO BÁSICO: Obtener todos los productos (sin stock)
     // Simplemente delega al repository que hace la query a la BD
     public List<Producto> listarProductos() {
-        return productoRepository.findAll();
+        logger.info("=== INICIO listarProductos() ===");
+        logger.info("Ejecutando findAll() en ProductoRepository...");
+        
+        List<Producto> productos = productoRepository.findAll();
+        
+        logger.info("Resultado findAll(): {} productos encontrados", productos.size());
+        if (productos.isEmpty()) {
+            logger.warn("¡ADVERTENCIA! La consulta devolvió 0 productos. Posible problema de conexión a BD.");
+        } else {
+            logger.info("Primeros productos encontrados:");
+            for (int i = 0; i < Math.min(3, productos.size()); i++) {
+                Producto p = productos.get(i);
+                logger.info("  - Producto {}: ID={}, Nombre='{}'", i+1, p.getId(), p.getNombre());
+            }
+        }
+        
+        logger.info("=== FIN listarProductos() ===");
+        return productos;
     }
 
     // MÉTODO BÁSICO: Crear nuevo producto
