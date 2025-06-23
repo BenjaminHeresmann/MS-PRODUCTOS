@@ -1,0 +1,24 @@
+# Ignorar archivos innecesarios para Docker
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+
+# Ignorar directorios de construcción locales
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Ignorar archivos de configuración de IDE
+.idea/
+.vscode/
+*.iml
+
+# Ignorar archivos de logs
+*.log
+
+# Ignorar archivos temporales
+*.tmp
+*.temp
