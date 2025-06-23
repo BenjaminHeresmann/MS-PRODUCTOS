@@ -2,7 +2,7 @@
 [phases.build]
 cmds = [
     "mvn clean package -DskipTests",
-    "cp target/*.jar app.jar"
+    "find target -name '*.jar' -not -name '*-sources.jar' -not -name '*-javadoc.jar' | head -1 | xargs -I {} cp {} app.jar"
 ]
 
 [phases.start]
